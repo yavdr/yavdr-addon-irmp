@@ -12,5 +12,5 @@ Description: USB IRMP Client ...
 
 Package: yavdr-addon-irmp
 Architecture: any
-Depends: irmplircd
+Depends: irmplircd, yavdr-utils
 Description: yaVDR integration for irmplircd
