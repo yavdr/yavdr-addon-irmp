@@ -1,0 +1,2 @@
+ACTION=="add", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="27d9", RUN+="/sbin/initctl emit irmp-detected DEVICE=/dev/%k"
+ACTION=="remove", SUBSYSTEM=="usb", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="27d9",  RUN+="/sbin/initctl emit irmp-lost"

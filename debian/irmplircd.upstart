@@ -1,0 +1,67 @@
+start on irmp-detected
+stop on runlevel [!2345] or irmp-lost
+
+env DEVICE=""
+export DEVICE
+env OPTIONS=""
+export OPTIONS
+
+env DEFAULTFILE=/etc/default/irmplircd
+
+respawn
+respawn limit 5 10
+
+pre-start script
+    if [ -f "$DEFAULTFILE" ]; then
+        . "$DEFAULTFILE"
+    fi
+    [ "x$ENABLED" = "x1" ] || { stop; exit 0; }
+
+    /bin/mkdir -p /var/run/lirc
+end script
+
+script
+    exec >/dev/kmsg 2>&1
+    if [ -f "$DEFAULTFILE" ]; then
+        . "$DEFAULTFILE"
+    fi
+
+    if [ -z "$DEVICE" ]; then
+        DEVICE=$(grep -l "USB IR Remote Receiver" /sys/class/hidraw/hidraw*/device/uevent | echo "/dev/$(grep -E hidraw[0-9]+ -o)")
+        if [ -z "$DEVICE" ] || [ "$DEVICE" = "/dev/" ]; then
+            logger -is -t "$UPSTART_JOB" "Warning: No irmp device found!"
+            stop
+            exit 0
+        else
+            export DEVICE
+        fi
+    fi
+
+    if [ ! -z "$SOCKET" ]; then
+        SOCKET="/var/run/lirc/irmplircd"
+    fi
+
+    if [ ! -z "$KEYMAP" ]; then
+        if [ -e "$KEYMAP" ]; then
+            KEY_OPTION="-t $KEYMAP" || KEY_OPTION=""
+        else
+            echo "irmplircd: ERROR: KEYMAP $KEYMAP defined in $DEFAULTFILE does not exist"
+        fi
+    fi
+    
+    if [ ! -z "$REPEAT" ]; then
+        if [ $REPEAT -ge 0 2>/dev/null ]; then
+            REPEAT_OPTION="-r $REPEAT" || REPEAT_OPTION=""
+        else
+            echo "REPEAT value is not a positive integer"
+            REPEAT_OPTION=""
+        fi
+    fi
+
+    if [ "x$GRAB" = "x1" ]; then
+        GRAB_OPTION="-g" || GRAB_OPTION=""
+    fi
+
+    echo "script: exec /usr/bin/irmplircd -f -d $SOCKET $KEY_OPTION $REPEAT_OPTION $GRAB_OPTION $DEVICE"
+    exec /usr/bin/irmplircd -f -d $SOCKET $KEY_OPTION $REPEAT_OPTION $GRAB_OPTION $DEVICE
+end script

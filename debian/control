@@ -1,0 +1,16 @@
+Source: irmplircd
+Section: video
+Priority: extra
+Maintainer: Alexander Grothe <seahawk1986@hotmail.com>
+Build-Depends: debhelper (>= 8.0.0), liblircclient-dev
+Standards-Version: 3.9.4
+
+Package: irmplircd
+Architecture: any
+Depends: usb-ircontrol
+Description: USB IRMP Client ...
+
+Package: yavdr-addon-irmp
+Architecture: any
+Depends: irmplircd
+Description: yaVDR integration for irmplircd

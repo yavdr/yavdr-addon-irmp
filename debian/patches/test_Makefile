@@ -1,0 +1,12 @@
+Index: easyvdr-usb-irmp-2.2.3-git2013112/Makefile
+===================================================================
+--- easyvdr-usb-irmp-2.2.3-git2013112.orig/Makefile	2014-01-01 16:48:26.000000000 +0100
++++ easyvdr-usb-irmp-2.2.3-git2013112/Makefile	2014-01-20 13:58:15.631220597 +0100
+@@ -15,6 +15,7 @@
+ all: $(SBIN_IRMPLIRCD) $(SBIN_IRMPEXEC)
+ 
+ irmplircd.o: irmplircd.c debug.h
++	echo $CFLAGS
+ 	$(CC) $(CFLAGS) -c $<
+ 
+ irmpexec.o: irmpexec.c debug.h

@@ -1,0 +1,9 @@
+#!/bin/bash
+#set -e
+
+if [ "$1" = "configure" ]; then
+initctl reload-configuration
+fi
+
+#DEBHELPER#
+
